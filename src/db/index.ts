@@ -1,5 +1,7 @@
-import { neon } from "@neondatabase/serverless";
-import { drizzle } from "drizzle-orm/neon-http";
+import { drizzle } from "drizzle-orm/node-postgres";
 import * as schema from "./schema";
 
-export const db = drizzle(neon(process.env.DATABASE_URL!), { schema });
+// La integración de Neon en Vercel crea DATABASE_URL (y POSTGRES_URL como respaldo).
+export const databaseUrl = process.env.DATABASE_URL ?? process.env.POSTGRES_URL;
+
+export const db = drizzle(databaseUrl!, { schema });

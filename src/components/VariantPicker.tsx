@@ -6,7 +6,7 @@ import {
   formatCop,
   productColors,
   type Product,
-} from "@/lib/catalog";
+} from "@/lib/products";
 import { ProductImage } from "./ProductImage";
 
 export function VariantPicker({ product }: { product: Product }) {
