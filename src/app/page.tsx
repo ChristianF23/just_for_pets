@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ProductCard } from "@/components/ProductCard";
-import { getProducts, type Species } from "@/lib/catalog";
+import { getProducts } from "@/lib/catalog";
+import type { Species } from "@/lib/products";
 
 const FILTERS: { label: string; value?: Species }[] = [
   { label: "Todos" },
@@ -15,7 +16,7 @@ export default async function Home({
 }) {
   const { especie } = await searchParams;
   const species = especie === "perro" || especie === "gato" ? especie : undefined;
-  const products = getProducts(species);
+  const products = await getProducts(species);
 
   return (
     <main>

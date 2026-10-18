@@ -1,4 +1,4 @@
-import { COLOR_SWATCHES, type Species } from "@/lib/catalog";
+import { COLOR_SWATCHES, type Species } from "@/lib/products";
 
 // Imagen provisional hasta que tengamos las fotos reales de los sacos.
 export function ProductImage({

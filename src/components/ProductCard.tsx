@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { formatCop, minPrice, productColors, type Product } from "@/lib/catalog";
+import { formatCop, minPrice, productColors, type Product } from "@/lib/products";
 import { ProductImage } from "./ProductImage";
 
 export function ProductCard({ product }: { product: Product }) {

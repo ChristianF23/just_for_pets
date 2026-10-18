@@ -19,7 +19,10 @@ npm run dev                  # abre http://localhost:3000
 
 ## Base de datos
 
-El esquema está en `src/db/schema.ts`. Los precios se guardan como enteros en pesos.
+La base de datos es PostgreSQL en Neon, conectada desde Vercel (variable `DATABASE_URL`).
+El esquema está en `src/db/schema.ts` y las migraciones en `drizzle/`. Los precios se guardan como enteros en pesos.
+
+`npm run build` aplica primero las migraciones pendientes, así que cada publicación en Vercel deja las tablas al día.
 
 ```bash
 npm run db:generate   # crea una migración a partir del esquema
