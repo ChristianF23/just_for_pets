@@ -30,11 +30,18 @@ npm run db:migrate    # aplica las migraciones en la base de datos
 npm run db:studio     # explora los datos en el navegador
 ```
 
+## Panel de administración
+
+En `/admin` se crean y editan productos, tallas, colores, precios y stock.
+La clave de entrada es la variable `ADMIN_PASSWORD`, que se configura en Vercel
+(Settings → Environment Variables). Si se cambia la clave, se cierran las sesiones abiertas.
+
 ## Estructura
 
 ```
 src/
-  app/        páginas de la tienda (y luego el panel de administración)
+  app/        páginas de la tienda
+  app/admin/  panel de administración
   db/         esquema y conexión a la base de datos
 drizzle/      migraciones generadas
 ```

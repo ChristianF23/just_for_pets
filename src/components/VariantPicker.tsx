@@ -45,7 +45,7 @@ export function VariantPicker({ product }: { product: Product }) {
                 className={`h-9 w-9 rounded-full border-2 ${
                   c === color ? "border-gray-900" : "border-white ring-1 ring-gray-300"
                 }`}
-                style={{ backgroundColor: COLOR_SWATCHES[c] }}
+                style={{ backgroundColor: COLOR_SWATCHES[c] ?? "#d1d5db" }}
               />
             ))}
           </div>
