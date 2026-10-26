@@ -1,10 +1,11 @@
 "use server";
 
-import { and, eq } from "drizzle-orm";
+import { del } from "@vercel/blob";
+import { and, eq, max, min } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { db } from "@/db";
-import { products, productVariants } from "@/db/schema";
+import { productImages, products, productVariants } from "@/db/schema";
 import {
   checkPassword,
   endSession,
@@ -210,4 +211,53 @@ export async function deleteVariant(productId: number, variantId: number) {
   }
   refreshStore(await productSlug(productId));
   redirect(`${path}?ok=${encodeURIComponent("Variante borrada")}`);
+}
+
+// --- Fotos ---
+
+const BLOB_HOST_SUFFIX = ".public.blob.vercel-storage.com";
+
+export async function addImage(productId: number, url: string) {
+  await requireAdmin();
+  const parsed = new URL(url);
+  if (parsed.protocol !== "https:" || !parsed.hostname.endsWith(BLOB_HOST_SUFFIX)) {
+    throw new Error("La foto no viene del almacenamiento de la tienda");
+  }
+  const [{ last }] = await db
+    .select({ last: max(productImages.position) })
+    .from(productImages)
+    .where(eq(productImages.productId, productId));
+  await db
+    .insert(productImages)
+    .values({ productId, url, position: (last ?? -1) + 1 });
+  revalidatePath(`/admin/productos/${productId}`);
+  refreshStore(await productSlug(productId));
+}
+
+export async function makeMainImage(productId: number, imageId: number) {
+  await requireAdmin();
+  const [{ first }] = await db
+    .select({ first: min(productImages.position) })
+    .from(productImages)
+    .where(eq(productImages.productId, productId));
+  await db
+    .update(productImages)
+    .set({ position: (first ?? 0) - 1 })
+    .where(and(eq(productImages.id, imageId), eq(productImages.productId, productId)));
+  refreshStore(await productSlug(productId));
+  redirect(`/admin/productos/${productId}?ok=${encodeURIComponent("Foto principal actualizada")}`);
+}
+
+export async function deleteImage(productId: number, imageId: number) {
+  await requireAdmin();
+  const [image] = await db
+    .delete(productImages)
+    .where(and(eq(productImages.id, imageId), eq(productImages.productId, productId)))
+    .returning({ url: productImages.url });
+  if (image) {
+    // Si falla el borrado del archivo, la foto ya no se muestra; no bloqueamos al usuario.
+    await del(image.url).catch(() => {});
+  }
+  refreshStore(await productSlug(productId));
+  redirect(`/admin/productos/${productId}?ok=${encodeURIComponent("Foto borrada")}`);
 }

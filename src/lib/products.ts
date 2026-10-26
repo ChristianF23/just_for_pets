@@ -15,6 +15,8 @@ export type Product = {
   name: string;
   description: string;
   species: Species;
+  // URLs de las fotos; la primera es la principal.
+  images: string[];
   variants: Variant[];
 };
 

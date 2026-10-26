@@ -9,6 +9,8 @@ export function ProductCard({ product }: { product: Product }) {
       <ProductImage
         species={product.species}
         color={colors[0]}
+        src={product.images[0]}
+        alt={product.name}
         className="transition group-hover:scale-[1.02]"
       />
       <div className="mt-3">
