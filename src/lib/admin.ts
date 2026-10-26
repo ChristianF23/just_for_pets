@@ -1,7 +1,7 @@
 import "server-only";
 import { asc, count, eq, sum } from "drizzle-orm";
 import { db } from "@/db";
-import { products, productVariants } from "@/db/schema";
+import { productImages, products, productVariants } from "@/db/schema";
 
 export async function listProducts() {
   return db
@@ -27,5 +27,14 @@ export async function getProductForEdit(id: number) {
     .from(productVariants)
     .where(eq(productVariants.productId, id))
     .orderBy(asc(productVariants.id));
-  return { ...product, variants };
+  const images = await db
+    .select()
+    .from(productImages)
+    .where(eq(productImages.productId, id))
+    .orderBy(asc(productImages.position), asc(productImages.id));
+  return { ...product, variants, images };
+}
+
+export function blobConfigured(): boolean {
+  return Boolean(process.env.BLOB_READ_WRITE_TOKEN);
 }

@@ -1,11 +1,14 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { getProductForEdit } from "@/lib/admin";
+import Image from "next/image";
+import { blobConfigured, getProductForEdit } from "@/lib/admin";
 import { requireAdmin } from "@/lib/auth";
 import { formatCop } from "@/lib/products";
 import {
   addVariant,
+  deleteImage,
   deleteVariant,
+  makeMainImage,
   updateProduct,
   updateVariant,
 } from "../../actions";
@@ -16,6 +19,7 @@ import {
   ProductFields,
   secondaryButtonClass,
 } from "../../ui";
+import { ImageUploader } from "../../ImageUploader";
 
 type VariantValues = {
   size: string;
@@ -76,6 +80,49 @@ export default async function EditProductPage({
           <ProductFields product={product} />
           <button className={`${buttonClass} mt-6`}>Guardar producto</button>
         </form>
+      </section>
+
+      <section className="mt-6 rounded-xl border border-gray-200 bg-white p-6">
+        <h2 className="font-semibold text-gray-900">Fotos</h2>
+        <p className="mt-1 text-sm text-gray-500">
+          La foto principal es la que se ve en el catálogo.
+        </p>
+        {product.images.length > 0 && (
+          <div className="mt-4 grid grid-cols-2 gap-4 sm:grid-cols-4">
+            {product.images.map((image, i) => (
+              <div key={image.id}>
+                <div className="relative aspect-square overflow-hidden rounded-lg bg-gray-100">
+                  <Image src={image.url} alt="" fill sizes="200px" className="object-cover" />
+                  {i === 0 && (
+                    <span className="absolute left-2 top-2 rounded-full bg-amber-700 px-2 py-0.5 text-xs text-white">
+                      Principal
+                    </span>
+                  )}
+                </div>
+                <div className="mt-2 flex flex-wrap gap-x-3 text-sm">
+                  {i > 0 && (
+                    <form action={makeMainImage.bind(null, product.id, image.id)}>
+                      <button className="text-amber-700 hover:underline">Hacer principal</button>
+                    </form>
+                  )}
+                  <form action={deleteImage.bind(null, product.id, image.id)}>
+                    <button className="text-red-700 hover:underline">Borrar</button>
+                  </form>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+        <div className="mt-4">
+          {blobConfigured() ? (
+            <ImageUploader productId={product.id} />
+          ) : (
+            <p className="rounded-lg bg-amber-50 px-4 py-3 text-sm text-amber-900">
+              Para subir fotos falta conectar el almacenamiento de imágenes: en Vercel, crea un
+              Blob store público en Storage y conéctalo a este proyecto.
+            </p>
+          )}
+        </div>
       </section>
 
       <section className="mt-6 rounded-xl border border-gray-200 bg-white p-6">

@@ -2,7 +2,7 @@ import "server-only";
 import { cache } from "react";
 import { and, asc, eq, inArray } from "drizzle-orm";
 import { db } from "@/db";
-import { products, productVariants } from "@/db/schema";
+import { productImages, products, productVariants } from "@/db/schema";
 import type { Product, Species } from "./products";
 
 export async function getProducts(species?: Species): Promise<Product[]> {
@@ -43,12 +43,23 @@ async function withVariants(
       ),
     )
     .orderBy(asc(productVariants.id));
+  const images = await db
+    .select()
+    .from(productImages)
+    .where(
+      inArray(
+        productImages.productId,
+        rows.map((r) => r.id),
+      ),
+    )
+    .orderBy(asc(productImages.position), asc(productImages.id));
   return rows
     .map((r) => ({
       slug: r.slug,
       name: r.name,
       description: r.description,
       species: r.species,
+      images: images.filter((i) => i.productId === r.id).map((i) => i.url),
       variants: variants
         .filter((v) => v.productId === r.id)
         .map(({ sku, size, color, priceCop, stock }) => ({

@@ -15,10 +15,44 @@ export function VariantPicker({ product }: { product: Product }) {
   const sizes = product.variants.filter((v) => v.color === color);
   const [size, setSize] = useState(sizes[0].size);
   const variant = sizes.find((v) => v.size === size) ?? sizes[0];
+  const [imageIndex, setImageIndex] = useState(0);
 
   return (
     <div className="mt-4 grid gap-8 md:grid-cols-2">
-      <ProductImage species={product.species} color={color} />
+      <div>
+        <ProductImage
+          species={product.species}
+          color={color}
+          src={product.images[imageIndex]}
+          alt={product.name}
+          sizes="(min-width: 768px) 50vw, 100vw"
+          priority
+        />
+        {product.images.length > 1 && (
+          <div className="mt-3 flex gap-2 overflow-x-auto">
+            {product.images.map((src, i) => (
+              <button
+                key={src}
+                type="button"
+                onClick={() => setImageIndex(i)}
+                aria-label={`Ver foto ${i + 1}`}
+                aria-pressed={i === imageIndex}
+                className={`w-16 shrink-0 rounded-xl border-2 ${
+                  i === imageIndex ? "border-amber-700" : "border-transparent"
+                }`}
+              >
+                <ProductImage
+                  species={product.species}
+                  color={color}
+                  src={src}
+                  sizes="64px"
+                  className="rounded-lg"
+                />
+              </button>
+            ))}
+          </div>
+        )}
+      </div>
 
       <div>
         <p className="text-sm uppercase tracking-wide text-amber-700">

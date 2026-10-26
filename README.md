@@ -36,6 +36,9 @@ En `/admin` se crean y editan productos, tallas, colores, precios y stock.
 La clave de entrada es la variable `ADMIN_PASSWORD`, que se configura en Vercel
 (Settings → Environment Variables). Si se cambia la clave, se cierran las sesiones abiertas.
 
+Las fotos se suben desde el panel a Vercel Blob (un Blob store **público** conectado al proyecto
+en Vercel → Storage, que crea la variable `BLOB_READ_WRITE_TOKEN`).
+
 ## Estructura
 
 ```

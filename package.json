@@ -12,6 +12,7 @@
     "db:studio": "drizzle-kit studio"
   },
   "dependencies": {
+    "@vercel/blob": "^2.8.2",
     "drizzle-orm": "^0.45.4",
     "next": "15.5.28",
     "pg": "^8.23.1",
